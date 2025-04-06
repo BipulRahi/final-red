@@ -41,6 +41,7 @@ export default function LoginPage() {
   const handleUserLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    check()
     if (ser) {
       // Redirect to dashboard after successful login
       router.push("/dashboard")
