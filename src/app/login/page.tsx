@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/src/components/ui/button"
@@ -17,11 +17,37 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [ser, setser] = useState(false)
   const router = useRouter()
+
+  async function check() {
+    try {
+      const response = await fetch('/api/colabData?action=health');
+      if (!response.status) {
+        setser(false)
+        throw new Error('Failed to check Colab status');
+      }
+      else{
+        setser(true)
+      }
+      
+    } catch (err) {
+      setser(false)
+      console.log("error occur while chekcing health");
+    }
+  }
+
 
   const handleUserLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    if (ser) {
+      // Redirect to dashboard after successful login
+      router.push("/dashboard")
+    } else {
+      // Redirect to waiting page if server is not active
+      router.push("/server-offline")
+    }
 
     // Simulate API call
     setTimeout(() => {
@@ -32,15 +58,9 @@ export default function LoginPage() {
 
       // Check server status before redirecting
       // In a real app, you would check with your backend API
-      const isServerActive = true // This would be a real check in production
+       // This would be a real check in production
 
-      if (isServerActive) {
-        // Redirect to dashboard after successful login
-        router.push("/dashboard")
-      } else {
-        // Redirect to waiting page if server is not active
-        router.push("/server-offline")
-      }
+    
     }, 1500)
   }
 

@@ -47,7 +47,7 @@ export async function GET(req) {
     if (storedNgrokUrl) {
       try {
         const response = await fetch(`${storedNgrokUrl}/health`);
-        if (response.ok) {
+        if (response.status) {
           const healthData = await response.json();
           return NextResponse.json(healthData, { status: 200 });
         } else {

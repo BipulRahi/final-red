@@ -14,6 +14,25 @@ export default function ServerOfflinePage() {
   const [checkProgress, setCheckProgress] = useState(0)
   const router = useRouter()
 
+    async function check() {
+      try {
+        const response = await fetch('/api/colabData?action=health');
+        if (response.status) {
+          router.replace("/dashboard")
+          console.log('checked Colab status - everything fine');
+          
+        }
+        else{
+          console.log("try again  ")
+        }
+        
+      } catch (err) {
+        console.log("error occur while chekcing health");
+      }
+    }
+  
+  
+
   const checkServerStatus = () => {
     setIsChecking(true)
     setCheckProgress(0)
