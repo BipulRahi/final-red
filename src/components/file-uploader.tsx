@@ -1,26 +1,57 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useDropzone } from "react-dropzone"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/src/components/ui/button"
 import { Progress } from "@/src/components/ui/progress"
-import { FileText, Upload } from "lucide-react"
+import { FileText, Upload, AlertCircle, X, Eye, FileImage, FileIcon as FilePdf } from "lucide-react"
+import { Alert, AlertDescription } from "@/src/components/ui/alert"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 
 export default function FileUploader() {
   const [file, setFile] = useState<File | null>(null)
+  const [filePreview, setFilePreview] = useState<string | null>(null)
+  const [fileType, setFileType] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [error, setError] = useState<string | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
   const router = useRouter()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
+    if (fileRejections.length > 0) {
+      setError("Invalid file format. Please upload a PDF or image file (JPG, PNG).")
+      return
+    }
+
     if (acceptedFiles.length > 0) {
-      setFile(acceptedFiles[0])
+      const selectedFile = acceptedFiles[0]
+      setFile(selectedFile)
+      setError(null)
+
+      // Determine file type
+      const type = selectedFile.type
+      setFileType(type)
+
+      // Create preview for images
+      if (type.startsWith("image/")) {
+        const reader = new FileReader()
+        reader.onload = () => {
+          setFilePreview(reader.result as string)
+        }
+        reader.readAsDataURL(selectedFile)
+      } else if (type === "application/pdf") {
+        // For PDFs, we'll just show an icon in the preview card
+        // and use the dialog for actual preview
+        setFilePreview(null)
+      }
     }
   }, [])
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: {
       "application/pdf": [".pdf"],
@@ -28,6 +59,17 @@ export default function FileUploader() {
       "image/png": [".png"],
     },
     maxFiles: 1,
+    maxSize: 10485760, // 10MB
+    onDropRejected: (rejections) => {
+      const rejection = rejections[0]
+      if (rejection.errors[0].code === "file-too-large") {
+        setError("File is too large. Maximum size is 10MB.")
+      } else {
+        setError("Invalid file format. Please upload a PDF or image file (JPG, PNG).")
+      }
+    },
+    noClick: true, // Disable click to open file dialog
+    noKeyboard: true, // Disable keyboard to open file dialog
   })
 
   const handleUpload = () => {
@@ -51,52 +93,186 @@ export default function FileUploader() {
     }, 300)
   }
 
+  const clearFile = () => {
+    setFile(null)
+    setFilePreview(null)
+    setFileType(null)
+    setError(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  const handleBrowseClick = () => {
+    open()
+  }
+
+  const getFileIcon = () => {
+    if (!fileType) return <FileText className="h-5 w-5 text-muted-foreground" />
+
+    if (fileType.startsWith("image/")) {
+      return <FileImage className="h-5 w-5 text-blue-500" />
+    } else if (fileType === "application/pdf") {
+      return <FilePdf className="h-5 w-5 text-red-500" />
+    }
+
+    return <FileText className="h-5 w-5 text-muted-foreground" />
+  }
+
   return (
     <div className="space-y-4">
-      <div
-        {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-          isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
-        }`}
-      >
-        <input {...getInputProps()} />
-        <div className="flex flex-col items-center justify-center space-y-2">
-          <Upload className="h-8 w-8 text-muted-foreground" />
-          <p className="text-sm font-medium">
-            {isDragActive ? "Drop the file here" : "Drag & drop a file here, or click to select"}
-          </p>
-          <p className="text-xs text-muted-foreground">Supports PDF, JPG, PNG (max 10MB)</p>
-        </div>
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+              <Button variant="ghost" size="icon" className="ml-auto h-5 w-5 p-0" onClick={() => setError(null)}>
+                <X className="h-3 w-3" />
+              </Button>
+            </Alert>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div {...getRootProps()} className="relative">
+        <motion.div
+          whileHover={{ scale: 1.01 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+            isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+          }`}
+        >
+          <input {...getInputProps()} ref={fileInputRef} />
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <motion.div
+              animate={{
+                y: isDragActive ? [0, -5, 0] : 0,
+              }}
+              transition={{
+                repeat: isDragActive ? Number.POSITIVE_INFINITY : 0,
+                duration: 1.5,
+              }}
+            >
+              <Upload className="h-8 w-8 text-muted-foreground" />
+            </motion.div>
+            <p className="text-sm font-medium">{isDragActive ? "Drop the file here" : "Drag & drop a file here"}</p>
+            <p className="text-xs text-muted-foreground">Supports PDF, JPG, PNG (max 10MB)</p>
+            <Button type="button" variant="outline" size="sm" onClick={handleBrowseClick} className="mt-2">
+              Browse Files
+            </Button>
+          </div>
+        </motion.div>
       </div>
 
-      {file && !uploading && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between p-3 border rounded-lg"
-        >
-          <div className="flex items-center gap-3">
-            <FileText className="h-5 w-5 text-muted-foreground" />
-            <div>
-              <p className="font-medium text-sm">{file.name}</p>
-              <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+      <AnimatePresence>
+        {file && !uploading && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0 }}
+            className="border rounded-lg overflow-hidden"
+          >
+            <div className="p-3 border-b flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {getFileIcon()}
+                <div>
+                  <p className="font-medium text-sm">{file.name}</p>
+                  <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {fileType && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowPreview(true)}
+                    className="flex items-center gap-1"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span className="hidden sm:inline">Preview</span>
+                  </Button>
+                )}
+                <Button size="sm" variant="ghost" onClick={clearFile}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          </div>
-          <Button size="sm" onClick={handleUpload}>
-            Upload
-          </Button>
-        </motion.div>
-      )}
 
-      {uploading && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Uploading...</span>
-            <span className="text-sm">{progress}%</span>
+            {/* Preview thumbnail for images */}
+            {filePreview && (
+              <div className="p-3 flex justify-center bg-muted/30">
+                <img
+                  src={filePreview || "/placeholder.svg"}
+                  alt="Preview"
+                  className="max-h-40 object-contain rounded-md"
+                />
+              </div>
+            )}
+
+            {/* PDF icon for PDFs */}
+            {fileType === "application/pdf" && !filePreview && (
+              <div className="p-3 flex justify-center bg-muted/30">
+                <div className="flex flex-col items-center p-4">
+                  <FilePdf className="h-16 w-16 text-red-500" />
+                  <p className="text-sm text-muted-foreground mt-2">PDF Document</p>
+                </div>
+              </div>
+            )}
+
+            <div className="p-3 flex justify-end">
+              <Button onClick={handleUpload} className="w-full sm:w-auto">
+                Upload Document
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {uploading && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0 }}
+            className="space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Uploading...</span>
+              <span className="text-sm">{progress}%</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* File Preview Dialog */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-3xl w-[90vw]">
+          <DialogHeader>
+            <DialogTitle>Document Preview</DialogTitle>
+          </DialogHeader>
+          <div className="flex justify-center items-center min-h-[50vh] bg-muted/30 rounded-md">
+            {filePreview && fileType?.startsWith("image/") && (
+              <img
+                src={filePreview || "/placeholder.svg"}
+                alt="Preview"
+                className="max-h-[70vh] max-w-full object-contain rounded-md"
+              />
+            )}
+            {fileType === "application/pdf" && file && (
+              <div className="w-full h-[70vh]">
+                <iframe src={URL.createObjectURL(file)} className="w-full h-full rounded-md" title="PDF Preview" />
+              </div>
+            )}
           </div>
-          <Progress value={progress} className="h-2" />
-        </motion.div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

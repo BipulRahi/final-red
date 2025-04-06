@@ -1,27 +1,65 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { Shield, FileText, Clock, CheckCircle, LogOut, Menu } from "lucide-react"
+import { Shield, FileText, Clock, CheckCircle, LogOut, Menu, MessageSquare } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet"
 import FileUploader from "@/src/components/file-uploader"
-import CameraCapture from "@/src/components/camera-capture"
 import { ThemeToggle } from "@/src/components/theme-toggle"
+import { useServerStatus } from "@/src/components/server-status-provider"
 
 export default function DashboardPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
+  const { status, isLoading } = useServerStatus()
+
+  // Redirect to server offline page if server is not online
+  useEffect(() => {
+    if (!isLoading && status === "offline") {
+      router.push("/server-offline")
+    }
+  }, [status, isLoading, router])
 
   const recentDocuments = [
     { id: 1, name: "Rental Agreement.pdf", date: "2024-04-01", status: "analyzed" },
     { id: 2, name: "Employment Contract.pdf", date: "2024-03-28", status: "analyzed" },
     { id: 3, name: "NDA Document.pdf", date: "2024-03-15", status: "analyzed" },
   ]
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 300, damping: 24 },
+    },
+  }
+
+  // Show loading state while checking server status
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -37,6 +75,9 @@ export default function DashboardPage() {
             </Link>
             <Link href="/dashboard/documents" className="text-sm font-medium">
               Documents
+            </Link>
+            <Link href="/dashboard/chat" className="text-sm font-medium">
+              Chat
             </Link>
             <Link href="/dashboard/settings" className="text-sm font-medium">
               Settings
@@ -72,6 +113,13 @@ export default function DashboardPage() {
                       Documents
                     </Link>
                     <Link
+                      href="/dashboard/chat"
+                      className="text-sm font-medium"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Chat
+                    </Link>
+                    <Link
                       href="/dashboard/settings"
                       className="text-sm font-medium"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -100,100 +148,133 @@ export default function DashboardPage() {
         </div>
       </header>
       <main className="flex-1 container py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+        <motion.div initial="hidden" animate="visible" variants={containerVariants}>
+          <motion.h1 className="text-3xl font-bold mb-6" variants={itemVariants}>
+            Dashboard
+          </motion.h1>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Total Documents</CardTitle>
-                <CardDescription>All uploaded contracts</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">12</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Risk Alerts</CardTitle>
-                <CardDescription>Contracts with high risk clauses</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-amber-500">3</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Pending Review</CardTitle>
-                <CardDescription>Contracts awaiting your review</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-emerald-500">0</div>
-              </CardContent>
-            </Card>
-          </div>
+          <motion.div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8" variants={itemVariants}>
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle>Total Documents</CardTitle>
+                  <CardDescription>All uploaded contracts</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">12</div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle>Risk Alerts</CardTitle>
+                  <CardDescription>Contracts with high risk clauses</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-amber-500">3</div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              onClick={() => router.push("/dashboard/chat")}
+              className="cursor-pointer"
+            >
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle>Document Chat</CardTitle>
+                  <CardDescription>Ask questions about your documents</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-6 w-6 text-emerald-500" />
+                    <span className="text-xl font-bold">AI Assistant</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="md:col-span-1">
-              <CardHeader>
-                <CardTitle>Upload New Document</CardTitle>
-                <CardDescription>Upload a contract to analyze</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="upload">
-                  <TabsList className="grid w-full grid-cols-2 mb-4">
-                    <TabsTrigger value="upload">File Upload</TabsTrigger>
-                    <TabsTrigger value="camera">Camera</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="upload">
-                    <FileUploader />
-                  </TabsContent>
-                  <TabsContent value="camera">
-                    <CameraCapture />
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
+            <motion.div variants={itemVariants} className="md:col-span-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upload New Document</CardTitle>
+                  <CardDescription>Upload a contract to analyze</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FileUploader />
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            <Card className="md:col-span-1">
-              <CardHeader>
-                <CardTitle>Recent Documents</CardTitle>
-                <CardDescription>Your recently analyzed contracts</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentDocuments.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted cursor-pointer"
-                      onClick={() => router.push(`/dashboard/analysis/${doc.id}`)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">{doc.name}</p>
-                          <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {doc.date}
-                          </p>
-                        </div>
-                      </div>
-                      <div>
-                        {doc.status === "analyzed" ? (
-                          <CheckCircle className="h-5 w-5 text-emerald-500" />
-                        ) : (
-                          <Clock className="h-5 w-5 text-amber-500" />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard/documents")}>
-                  View All Documents
-                </Button>
-              </CardFooter>
-            </Card>
+            <motion.div variants={itemVariants} className="md:col-span-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Documents</CardTitle>
+                  <CardDescription>Your recently analyzed contracts</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AnimatePresence>
+                    <motion.div className="space-y-4">
+                      {recentDocuments.map((doc, index) => (
+                        <motion.div
+                          key={doc.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{
+                            opacity: 1,
+                            y: 0,
+                            transition: { delay: index * 0.1 },
+                          }}
+                          whileHover={{
+                            scale: 1.02,
+                            backgroundColor: "var(--muted)",
+                            transition: { duration: 0.2 },
+                          }}
+                          className="flex items-center justify-between p-3 border rounded-lg cursor-pointer"
+                          onClick={() => router.push(`/dashboard/analysis/${doc.id}`)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-muted-foreground" />
+                            <div>
+                              <p className="font-medium">{doc.name}</p>
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Clock className="h-3 w-3" /> {doc.date}
+                              </p>
+                            </div>
+                          </div>
+                          <div>
+                            {doc.status === "analyzed" ? (
+                              <CheckCircle className="h-5 w-5 text-emerald-500" />
+                            ) : (
+                              <Clock className="h-5 w-5 text-amber-500" />
+                            )}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </AnimatePresence>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard/documents")}>
+                    View All Documents
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
           </div>
         </motion.div>
       </main>

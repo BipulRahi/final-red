@@ -9,7 +9,18 @@ import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Badge } from "@/src/components/ui/badge"
-import { FileText, AlertTriangle, Info, ArrowLeft, Download, Share2, Building, Users, Calendar } from "lucide-react"
+import {
+  FileText,
+  AlertTriangle,
+  Info,
+  ArrowLeft,
+  Download,
+  Share2,
+  Building,
+  Users,
+  Calendar,
+  MessageSquare,
+} from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -21,6 +32,7 @@ import {
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { ThemeToggle } from "@/src/components/theme-toggle"
+import { Alert, AlertDescription } from "@/src/components/ui/alert"
 
 export default function AnalysisPage() {
   const params = useParams()
@@ -31,6 +43,7 @@ export default function AnalysisPage() {
   const [shareEmail, setShareEmail] = useState("")
   const [shareMessage, setShareMessage] = useState("")
   const [isSharing, setIsSharing] = useState(false)
+  const [shareSuccess, setShareSuccess] = useState(false)
 
   useEffect(() => {
     // Simulate API call to get analysis data
@@ -89,7 +102,7 @@ export default function AnalysisPage() {
         ],
       })
       setLoading(false)
-    }, 1000) // Reduced loading time from 1500ms to 1000ms
+    }, 1000)
 
     return () => clearTimeout(timer)
   }, [params.id])
@@ -111,10 +124,17 @@ export default function AnalysisPage() {
     // Simulate API call
     setTimeout(() => {
       setIsSharing(false)
-      setShowShareDialog(false)
-      alert(`Analysis shared with ${shareEmail}`)
-      setShareEmail("")
-      setShareMessage("")
+      setShareSuccess(true)
+
+      // Simulate email notification for document sharing
+      console.log(`Email notification: Document analysis shared with ${shareEmail}`)
+
+      setTimeout(() => {
+        setShowShareDialog(false)
+        setShareSuccess(false)
+        setShareEmail("")
+        setShareMessage("")
+      }, 2000)
     }, 1000)
   }
 
@@ -127,6 +147,9 @@ export default function AnalysisPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="ml-2 text-lg font-semibold">Analyzing Document...</h1>
+            <div className="ml-auto">
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <main className="flex-1 container py-8">
@@ -155,13 +178,22 @@ export default function AnalysisPage() {
           <h1 className="ml-2 text-lg font-semibold">{analysis.title}</h1>
           <div className="ml-auto flex items-center gap-2">
             <ThemeToggle />
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => router.push(`/dashboard/analysis/${params.id}/chat`)}
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Chat with Document</span>
+            </Button>
             <Button variant="outline" size="sm" className="hidden md:flex" onClick={() => setShowShareDialog(true)}>
               <Share2 className="h-4 w-4 mr-2" />
               Share
             </Button>
             <Button variant="outline" size="sm" onClick={handleDownload}>
               <Download className="h-4 w-4 mr-2" />
-              Download
+              <span className="hidden sm:inline">Download</span>
             </Button>
           </div>
         </div>
@@ -228,7 +260,14 @@ export default function AnalysisPage() {
               <CardContent>
                 <div className="space-y-3">
                   {analysis.riskyClauses.map((clause: any, index: number) => (
-                    <div key={index} className="p-2 border rounded-md">
+                    <motion.div
+                      key={index}
+                      className="p-2 border rounded-md"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      whileHover={{ scale: 1.01 }}
+                    >
                       <div className="flex items-center justify-between mb-1">
                         <h4 className="font-medium">Clause {index + 1}</h4>
                         <Badge
@@ -241,7 +280,7 @@ export default function AnalysisPage() {
                       </div>
                       <p className="text-sm mb-1 bg-muted p-2 rounded">{clause.clause}</p>
                       <p className="text-xs text-muted-foreground">{clause.explanation}</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </CardContent>
@@ -343,40 +382,52 @@ export default function AnalysisPage() {
             <DialogTitle>Share Analysis</DialogTitle>
             <DialogDescription>Enter the recipient's email and a message to share this analysis.</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <Input
-                type="email"
-                id="email"
-                value={shareEmail}
-                onChange={(e) => setShareEmail(e.target.value)}
-                className="col-span-3"
-              />
+          {shareSuccess ? (
+            <div className="py-6">
+              <Alert className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900">
+                <AlertDescription className="text-green-800 dark:text-green-300">
+                  Analysis shared successfully with {shareEmail}!
+                </AlertDescription>
+              </Alert>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="message" className="text-right">
-                Message
-              </Label>
-              <Input
-                type="text"
-                id="message"
-                value={shareMessage}
-                onChange={(e) => setShareMessage(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setShowShareDialog(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" onClick={handleShare} disabled={isSharing}>
-              {isSharing ? "Sharing..." : "Share"}
-            </Button>
-          </DialogFooter>
+          ) : (
+            <>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="email" className="text-right">
+                    Email
+                  </Label>
+                  <Input
+                    type="email"
+                    id="email"
+                    value={shareEmail}
+                    onChange={(e) => setShareEmail(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="message" className="text-right">
+                    Message
+                  </Label>
+                  <Input
+                    type="text"
+                    id="message"
+                    value={shareMessage}
+                    onChange={(e) => setShareMessage(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="button" variant="secondary" onClick={() => setShowShareDialog(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" onClick={handleShare} disabled={isSharing}>
+                  {isSharing ? "Sharing..." : "Share"}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

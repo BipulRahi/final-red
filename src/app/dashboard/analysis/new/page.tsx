@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { FileText, ArrowLeft } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 import { Progress } from "@/src/components/ui/progress"
+import { ThemeToggle } from "@/src/components/theme-toggle"
 
 export default function AnalyzingPage() {
   const [progress, setProgress] = useState(0)
@@ -21,6 +22,9 @@ export default function AnalyzingPage() {
           // Redirect to a dummy analysis page when complete
           setTimeout(() => {
             router.push("/dashboard/analysis/new-doc")
+
+            // Simulate email notification for document analysis completion
+            console.log("Email notification: Your document analysis is complete and ready to view")
           }, 500)
           return 100
         }
@@ -45,6 +49,9 @@ export default function AnalyzingPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="ml-2 text-lg font-semibold">Analyzing Document</h1>
+          <div className="ml-auto">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
       <main className="flex-1 container py-8">
