@@ -20,6 +20,8 @@ import {
   Users,
   Calendar,
   MessageSquare,
+  CheckCircle2,
+  Clock,
 } from "lucide-react"
 import {
   Dialog,
@@ -83,20 +85,20 @@ export default function AnalysisPage() {
           {
             clause:
               "LATE CHARGES: If rent is not paid by the 5th day of the month, Tenant agrees to pay a late charge of $100.00 plus $10.00 per day for each additional day rent remains unpaid.",
-            risk: "High",
+            risk: "high",
             explanation:
               "The late fee structure may be considered excessive and potentially unenforceable in some jurisdictions. The $10 per day additional charge could be viewed as a penalty rather than reasonable compensation.",
           },
           {
             clause:
               "TERMINATION: Either party may terminate this Agreement upon 60 days written notice. If Tenant terminates before the end of the term, Tenant shall be responsible for rent until the end of the term or until the Premises are re-rented, whichever occurs first.",
-            risk: "Medium",
+            risk: "medium",
             explanation:
               "While the landlord can terminate with 60 days notice, the tenant remains responsible for rent until the end of the term. This creates an imbalance in termination rights.",
           },
           {
             clause: "GOVERNING LAW: This Agreement shall be governed by the laws of the State of [State].",
-            risk: "Low",
+            risk: "low",
             explanation: "The governing state is not specified, which could create ambiguity in case of disputes.",
           },
         ],
@@ -136,6 +138,30 @@ export default function AnalysisPage() {
         setShareMessage("")
       }, 2000)
     }, 1000)
+  }
+
+  // ADDED: Function to render risk badge with responsive design
+  const renderRiskBadge = (risk: string) => {
+    // Different variants based on risk level
+    const variant = risk === "high" ? "destructive" : risk === "medium" ? "default" : "outline"
+
+    return (
+      <Badge variant={variant} className="flex items-center gap-1">
+        {/* Icon based on risk level */}
+        {risk === "high" ? (
+          <AlertTriangle className="h-3 w-3" />
+        ) : risk === "medium" ? (
+          <Clock className="h-3 w-3" />
+        ) : (
+          <CheckCircle2 className="h-3 w-3" />
+        )}
+
+        {/* Text that hides on small screens */}
+        <span className="hidden sm:inline">
+          {risk === "high" ? "High Risk" : risk === "medium" ? "Medium Risk" : "Low Risk"}
+        </span>
+      </Badge>
+    )
   }
 
   if (loading) {
@@ -270,13 +296,9 @@ export default function AnalysisPage() {
                     >
                       <div className="flex items-center justify-between mb-1">
                         <h4 className="font-medium">Clause {index + 1}</h4>
-                        <Badge
-                          variant={
-                            clause.risk === "High" ? "destructive" : clause.risk === "Medium" ? "default" : "outline"
-                          }
-                        >
-                          {clause.risk} Risk
-                        </Badge>
+
+                        {/* MODIFIED: Using the responsive risk badge function */}
+                        {renderRiskBadge(clause.risk)}
                       </div>
                       <p className="text-sm mb-1 bg-muted p-2 rounded">{clause.clause}</p>
                       <p className="text-xs text-muted-foreground">{clause.explanation}</p>

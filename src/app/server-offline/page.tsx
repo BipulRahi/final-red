@@ -13,25 +13,31 @@ export default function ServerOfflinePage() {
   const [isChecking, setIsChecking] = useState(false)
   const [checkProgress, setCheckProgress] = useState(0)
   const router = useRouter()
+  const [isServerOnline,setisServerOnline]=useState(false)
 
-    async function check() {
-      try {
-        const response = await fetch('/api/colabData?action=health');
-        if ((await (response.json())).status) {
-          router.replace("/dashboard")
-          console.log('checked Colab status - everything fine');
-          return;
-        }
-        else{
-          console.log("try again  ")
-        }
-        
-      } catch (err) {
-        console.log("error occur while chekcing health");
+  // Add a countdown timer for next automatic check
+  const [nextCheckCountdown, setNextCheckCountdown] = useState(30)
+  async function check() {
+    try {
+      const response = await fetch('/api/colabData?action=health');
+      console.log(response)
+      if (response.status) {
+        setisServerOnline(true)
+        router.replace("/dashboard")
+        console.log('checked Colab status - everything fine');
+        return;
       }
+      else{
+        setisServerOnline(false)
+        console.log("try again  ")
+      }
+      
+    } catch (err) {
+      console.log("error occur while chekcing health");
     }
-  
-  
+  }
+
+
 
   const checkServerStatus = () => {
     setIsChecking(true)
@@ -39,37 +45,57 @@ export default function ServerOfflinePage() {
 
     // Simulate checking server status
     let progress = 0
-    check()
     const interval = setInterval(() => {
       progress += 10
       setCheckProgress(progress)
 
       if (progress >= 100) {
+        check()
         clearInterval(interval)
         setIsChecking(false)
 
+        // Reset the countdown timer after manual check
+        setNextCheckCountdown(30)
         // For demo purposes, we'll keep showing the offline page
         // In a real app, you would check with your backend API and redirect if the server is online
       }
     }, 200)
+    
   }
 
   // Auto-check server status periodically
   useEffect(() => {
-    const interval = setInterval(() => {
-      // In a real app, you would check with your backend API
-      // For demo purposes, we'll just simulate the check without changing the status
+    // Countdown timer for next automatic check
+    const countdownInterval = setInterval(() => {
+      setNextCheckCountdown((prev) => {
+        if (prev <= 1) {
+          // When countdown reaches zero, perform the check
+          if (!isChecking) {
+            checkServerStatus()
+          }
+          return 30 // Reset to 30 seconds
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    // Actual server status check interval
+    const checkInterval = setInterval(() => {
+      
       console.log("Checking server status automatically...")
-      check()
+
       // If server is online, redirect to dashboard
       // const isServerOnline = Math.random() > 0.8; // Example random check
-      // if (isServerOnline) {
-      //   router.push("/dashboard");
-      // }
+      if (isServerOnline) {
+        router.replace("/dashboard");
+      }
     }, 30000) // Check every 30 seconds
 
-    return () => clearInterval(interval)
-  }, [router])
+    return () => {
+      clearInterval(checkInterval)
+      clearInterval(countdownInterval)
+    }
+  }, [router, isChecking])
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -129,6 +155,11 @@ export default function ServerOfflinePage() {
               Check Server Status
             </Button>
           )}
+
+          {/* ADDED: Countdown timer for next automatic check */}
+          <div className="mt-4 text-sm text-muted-foreground">
+            Next automatic check in: <span className="font-bold">{nextCheckCountdown}</span> seconds
+          </div>
 
           <div className="pt-8 border-t">
             <p className="text-sm text-muted-foreground">

@@ -12,14 +12,31 @@ import {
   Users,
   Star,
 } from "lucide-react"
+// import Lottie from "lottie-react";
+import animationDataK from '../public/2.json'; // Adjust the file paths as needed
+import animationDataL from '../public/3.json';
+import animationDataM from '../public/44.json';
 import { ThemeToggle } from "@/src/components/theme-toggle"
 import { Card, CardContent } from "@/src/components/ui/card"
+// import AnimatedSequence from "../components/animat";
 import dynamic from "next/dynamic"
+import { Suspense } from "react";
+// import LoopingLottie from "../components/LoopingLottie";
+const LoopingLottie = dynamic(() => import('../components/LoopingLottie'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>, // Optional loading indicator
+});
+
+
 
 // Dynamically import the 3D hero component with no SSR
 // const Hero3D = dynamic(() => import("@/src/components/hero-3d"), { ssr: false })
 
 export default function Home() {
+
+  const animations = [animationDataK, animationDataL, animationDataM];
+
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -74,6 +91,9 @@ export default function Home() {
               </div>
               <div className="flex items-center justify-center h-[400px]">
                 {/* <Hero3D /> */}
+                <Suspense fallback={<p>Loading...</p>}>
+                <LoopingLottie />
+                </Suspense>
               </div>
             </div>
           </div>

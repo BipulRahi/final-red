@@ -42,8 +42,10 @@ export async function GET(req) {
     } else {
       return NextResponse.json({ error: 'ngrok URL not set' }, { status: 404 });
     }
-  } else if (action === 'health') {
+  } 
+  else if (action === 'health') {
     // Handle health check request
+    
     if (storedNgrokUrl) {
       try {
         const response = await fetch(`${storedNgrokUrl}/health`);
@@ -57,10 +59,14 @@ export async function GET(req) {
         console.error('Error checking Colab health:', error);
         return NextResponse.json({ error: 'Error checking Colab health' }, { status: 500 });
       }
-    } else {
+    } 
+    else {
+      
       return NextResponse.json({ error: 'ngrok URL not set' }, { status: 404 });
     }
-  } else {
+  } 
+  
+  else {
     // Handle regular GET request (get storedNgrokUrl)
     if (storedNgrokUrl) {
       return NextResponse.json({ ngrokUrl: storedNgrokUrl }, { status: 200 });

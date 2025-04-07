@@ -23,6 +23,7 @@ export default function LoginPage() {
   async function check() {
     try {
       const response = await fetch('/api/colabData?action=health');
+      console.log(response)
       if (!response.status) {
         setser(false)
         throw new Error('Failed to check Colab status');

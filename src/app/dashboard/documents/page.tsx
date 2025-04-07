@@ -8,7 +8,7 @@ import { Button } from "@/src/components/ui/button"
 import { Input } from "@/src/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
-import { Shield, FileText, Search, Filter, CheckCircle, Clock, Upload } from "lucide-react"
+import { Shield, FileText, Search, Filter, CheckCircle, Clock, Upload, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { ThemeToggle } from "@/src/components/theme-toggle"
 
 export default function DocumentsPage() {
@@ -27,6 +27,31 @@ export default function DocumentsPage() {
   ]
 
   const filteredDocuments = documents.filter((doc) => doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
+
+  // ADDED: Function to render risk badge with responsive design
+  const renderRiskBadge = (risk: string) => {
+    // Different variants based on risk level
+    const variant = risk === "high" ? "destructive" : risk === "medium" ? "default" : "outline"
+
+    // For small screens, show only icon
+    return (
+      <Badge variant={variant} className="flex items-center gap-1">
+        {/* Icon based on risk level */}
+        {risk === "high" ? (
+          <AlertTriangle className="h-3 w-3" />
+        ) : risk === "medium" ? (
+          <Clock className="h-3 w-3" />
+        ) : (
+          <CheckCircle2 className="h-3 w-3" />
+        )}
+
+        {/* Text that hides on small screens */}
+        <span className="hidden sm:inline">
+          {risk === "high" ? "High Risk" : risk === "medium" ? "Medium Risk" : "Low Risk"}
+        </span>
+      </Badge>
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -106,11 +131,9 @@ export default function DocumentsPage() {
                         ) : (
                           <Clock className="h-5 w-5 text-amber-500" />
                         )}
-                        <Badge
-                          variant={doc.risk === "high" ? "destructive" : doc.risk === "medium" ? "default" : "outline"}
-                        >
-                          {doc.risk === "high" ? "High Risk" : doc.risk === "medium" ? "Medium Risk" : "Low Risk"}
-                        </Badge>
+
+                        {/* MODIFIED: Using the responsive risk badge function */}
+                        {renderRiskBadge(doc.risk)}
                       </div>
                     </div>
                   ))
