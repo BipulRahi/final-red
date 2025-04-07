@@ -53,12 +53,12 @@ export default function AnalysisPage() {
       setAnalysis({
         id: params.id,
         title: "Rental Agreement.pdf",
-        date: "April 1, 2024",
-        extractedText: `This RENTAL AGREEMENT (the "Agreement") is made and entered into as of April 1, 2024, by and between ABC Properties LLC ("Landlord") and John Smith ("Tenant").
+        date: "April 1, 2025",
+        extractedText: `This RENTAL AGREEMENT (the "Agreement") is made and entered into as of April 1, 2025, by and between ABC Properties LLC ("Landlord") and John Smith ("Tenant").
 
 1. PREMISES: Landlord hereby leases to Tenant and Tenant hereby leases from Landlord for residential purposes only, the premises located at 123 Main Street, Apt 4B, Anytown, USA ("Premises").
 
-2. TERM: The term of this Agreement shall be for a period of 12 months, commencing on April 15, 2024 and ending on April 14, 2025.
+2. TERM: The term of this Agreement shall be for a period of 12 months, commencing on April 15, 2025 and ending on April 14, 2025.
 
 3. RENT: Tenant agrees to pay monthly rent of $1,500.00, due on the 1st day of each month.
 
@@ -246,7 +246,7 @@ export default function AnalysisPage() {
                       <Calendar className="h-5 w-5 text-muted-foreground" />
                       <div>
                         <p className="text-sm text-muted-foreground">Term</p>
-                        <p className="font-medium">April 15, 2024 - April 14, 2025</p>
+                        <p className="font-medium">April 15, 2025 - April 14, 2025</p>
                       </div>
                     </div>
                   </div>

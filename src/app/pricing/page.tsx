@@ -230,7 +230,7 @@ export default function PricingPage() {
 
       <footer className="border-t py-6">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-          <p className="text-sm text-muted-foreground">© 2024 ContractSafe. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2025 ContractSafe. All rights reserved.</p>
           <nav className="flex gap-4 sm:gap-6">
             <Link href="/terms" className="text-sm font-medium">
               Terms

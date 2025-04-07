@@ -25,9 +25,9 @@ export default function DashboardPage() {
   }, [status, isLoading, router])
 
   const recentDocuments = [
-    { id: 1, name: "Rental Agreement.pdf", date: "2024-04-01", status: "analyzed" },
-    { id: 2, name: "Employment Contract.pdf", date: "2024-03-28", status: "analyzed" },
-    { id: 3, name: "NDA Document.pdf", date: "2024-03-15", status: "analyzed" },
+    { id: 1, name: "Rental Agreement.pdf", date: "2025-04-01", status: "analyzed" },
+    { id: 2, name: "Employment Contract.pdf", date: "2025-03-28", status: "analyzed" },
+    { id: 3, name: "NDA Document.pdf", date: "2025-03-15", status: "analyzed" },
   ]
 
   const containerVariants = {

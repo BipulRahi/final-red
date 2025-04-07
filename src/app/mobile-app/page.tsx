@@ -29,7 +29,7 @@ export default function MobileAppPage() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <Shield className="h-6 w-6 flex-shrink-0" />
+            <Shield className="h-6 w-6  flex-shrink-0" />
             <span className="truncate">ContractSafe</span>
           </Link>
           <div className="ml-auto flex items-center gap-2">
@@ -122,13 +122,13 @@ export default function MobileAppPage() {
           >
             <div className="relative max-w-full">
               <div className="bg-gradient-to-br from-primary to-primary/60 rounded-[40px] p-4 shadow-xl w-[280px] max-w-full h-[560px] flex flex-col mx-auto">
-                <div className="bg-black rounded-[32px] flex-1 overflow-hidden relative">
+                <div className="bg-black rounded-[32px]  flex-1 overflow-hidden relative">
                   {/* App mockup screen */}
                   <div className="absolute inset-0 bg-background flex flex-col">
                     <div className="h-12 bg-primary flex items-center justify-center">
-                      <div className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-primary-foreground" />
-                        <span className="text-sm font-bold text-primary-foreground">ContractSafe</span>
+                      <div className="flex mt-5 items-center gap-2">
+                        <Shield className="h-5 w-5  text-primary-foreground" />
+                        <span className="text-sm  font-bold text-primary-foreground">ContractSafe</span>
                       </div>
                     </div>
 
@@ -138,6 +138,7 @@ export default function MobileAppPage() {
                         initial={{ x: -50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.5 }}
+                        
                       >
                         <Smartphone className="h-5 w-5 text-primary flex-shrink-0" />
                         <div className="text-xs truncate">
@@ -196,6 +197,7 @@ export default function MobileAppPage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.2, duration: 0.5 }}
+               
               >
                 <p className="text-xs font-medium truncate">Document analyzed!</p>
               </motion.div>
@@ -215,7 +217,7 @@ export default function MobileAppPage() {
 
       <footer className="border-t py-6">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-          <p className="text-sm text-muted-foreground">© 2024 ContractSafe. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2025 ContractSafe. All rights reserved.</p>
           <nav className="flex gap-4 sm:gap-6">
             <Link href="/terms" className="text-sm font-medium">
               Terms

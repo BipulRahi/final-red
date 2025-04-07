@@ -97,7 +97,7 @@ export default function TermsPage() {
           </div>
 
           <div className="mt-8 border-t pt-6">
-            <p className="text-sm text-muted-foreground">Last updated: April 3, 2024</p>
+            <p className="text-sm text-muted-foreground">Last updated: April 3, 2025</p>
           </div>
         </div>
       </main>

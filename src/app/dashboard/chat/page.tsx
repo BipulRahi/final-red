@@ -37,9 +37,9 @@ export default function ChatPage() {
   const [currentDocument, setCurrentDocument] = useState<Document | null>(null)
   const [showDocumentList, setShowDocumentList] = useState(false)
   const [documents, setDocuments] = useState<Document[]>([
-    { id: "1", title: "Rental Agreement.pdf", date: "2024-04-01" },
-    { id: "2", title: "Employment Contract.pdf", date: "2024-03-28" },
-    { id: "3", title: "NDA Document.pdf", date: "2024-03-15" },
+    { id: "1", title: "Rental Agreement.pdf", date: "2025-04-01" },
+    { id: "2", title: "Employment Contract.pdf", date: "2025-03-28" },
+    { id: "3", title: "NDA Document.pdf", date: "2025-03-15" },
   ])
   const [file, setFile] = useState<File | null>(null)
   const [filePreview, setFilePreview] = useState<string | null>(null)
@@ -116,7 +116,7 @@ export default function ChatPage() {
         } else if (inputMessage.toLowerCase().includes("deposit")) {
           botResponse = "The security deposit is $3,000, to be paid upon execution of the agreement."
         } else if (inputMessage.toLowerCase().includes("term") || inputMessage.toLowerCase().includes("duration")) {
-          botResponse = "The agreement term is 12 months, starting on April 15, 2024 and ending on April 14, 2025."
+          botResponse = "The agreement term is 12 months, starting on April 15, 2025 and ending on April 14, 2025."
         } else if (inputMessage.toLowerCase().includes("terminate") || inputMessage.toLowerCase().includes("cancel")) {
           botResponse =
             "Either party may terminate the agreement with 60 days written notice. If the tenant terminates before the end of the term, they remain responsible for rent until the end of the term or until the premises are re-rented, whichever occurs first."

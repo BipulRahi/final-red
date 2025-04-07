@@ -100,7 +100,7 @@ export default function DocumentChatPage() {
         } else if (inputMessage.toLowerCase().includes("deposit")) {
           botResponse = "The security deposit is $3,000, to be paid upon execution of the agreement."
         } else if (inputMessage.toLowerCase().includes("term") || inputMessage.toLowerCase().includes("duration")) {
-          botResponse = "The agreement term is 12 months, starting on April 15, 2024 and ending on April 14, 2025."
+          botResponse = "The agreement term is 12 months, starting on April 15, 2025 and ending on April 14, 2025."
         } else if (inputMessage.toLowerCase().includes("terminate") || inputMessage.toLowerCase().includes("cancel")) {
           botResponse =
             "Either party may terminate the agreement with 60 days written notice. If the tenant terminates before the end of the term, they remain responsible for rent until the end of the term or until the premises are re-rented, whichever occurs first."

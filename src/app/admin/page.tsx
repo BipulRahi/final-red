@@ -214,7 +214,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <Button 
-               
+               variant={"ghost"}
                 size="icon" 
                 onClick={refreshServerStatus}
                 className={isRefreshing ? "animate-spin" : ""}
@@ -243,7 +243,9 @@ export default function AdminDashboardPage() {
                 <CardDescription>Total documents analyzed</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{documentsProcessed}</div>
+              <div className="text-3xl font-bold">
+                  <AnimatedCounter value={documentsProcessed} />
+                </div>
               </CardContent>
             </Card>
 

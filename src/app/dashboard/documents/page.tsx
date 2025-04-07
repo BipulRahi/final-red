@@ -16,14 +16,14 @@ export default function DocumentsPage() {
   const router = useRouter()
 
   const documents = [
-    { id: 1, name: "Rental Agreement.pdf", date: "2024-04-01", status: "analyzed", risk: "high" },
-    { id: 2, name: "Employment Contract.pdf", date: "2024-03-28", status: "analyzed", risk: "low" },
-    { id: 3, name: "NDA Document.pdf", date: "2024-03-15", status: "analyzed", risk: "medium" },
-    { id: 4, name: "Service Agreement.pdf", date: "2024-03-10", status: "analyzed", risk: "low" },
-    { id: 5, name: "Vendor Contract.pdf", date: "2024-03-05", status: "analyzed", risk: "medium" },
-    { id: 6, name: "Lease Agreement.pdf", date: "2024-02-28", status: "analyzed", risk: "high" },
-    { id: 7, name: "Partnership Agreement.pdf", date: "2024-02-20", status: "analyzed", risk: "low" },
-    { id: 8, name: "Consulting Contract.pdf", date: "2024-02-15", status: "analyzed", risk: "low" },
+    { id: 1, name: "Rental Agreement.pdf", date: "2025-04-01", status: "analyzed", risk: "high" },
+    { id: 2, name: "Employment Contract.pdf", date: "2025-03-28", status: "analyzed", risk: "low" },
+    { id: 3, name: "NDA Document.pdf", date: "2025-03-15", status: "analyzed", risk: "medium" },
+    { id: 4, name: "Service Agreement.pdf", date: "2025-03-10", status: "analyzed", risk: "low" },
+    { id: 5, name: "Vendor Contract.pdf", date: "2025-03-05", status: "analyzed", risk: "medium" },
+    { id: 6, name: "Lease Agreement.pdf", date: "2025-02-28", status: "analyzed", risk: "high" },
+    { id: 7, name: "Partnership Agreement.pdf", date: "2025-02-20", status: "analyzed", risk: "low" },
+    { id: 8, name: "Consulting Contract.pdf", date: "2025-02-15", status: "analyzed", risk: "low" },
   ]
 
   const filteredDocuments = documents.filter((doc) => doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
