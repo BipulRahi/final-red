@@ -12,6 +12,9 @@
     max-width: 400px;
     height: auto;
   }
+  .lottie-container canvas {
+    background-color: transparent !important;
+  }
   
   .lottie-container {
     transition: opacity 0.5s ease-in-out;

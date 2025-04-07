@@ -8,7 +8,14 @@ import animation5 from '../public/5.json';
 import './LoopingLottie.css';
 
 const LoopingLottie: React.FC = () => {
-  const animations = [animation1, animation3, animation4,animation2,animation5];
+  // 👇 Replace with actual dark mode detection logic
+  const isDarkMode = window.matchMedia &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  const animations = isDarkMode
+    ? [animation3, animation4, animation2] // without animation1
+    : [animation1, animation3, animation4, animation2, animation5];
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const lottieRef = useRef<any>(null);
@@ -16,19 +23,17 @@ const LoopingLottie: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setFade(false); // start fade out
-  
-      // Delay for fade-out + pause (e.g., 0.5s + 0.5s = 1s total)
+
       const next = setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % animations.length);
         setFade(true); // start fade in
-      }, 1000); // 500ms fade-out + 500ms pause
-  
+      }, 1000);
+
       return () => clearTimeout(next);
-    }, 4000); // animation display duration
-  
+    }, 4000);
+
     return () => clearTimeout(timer);
-  }, [currentIndex]);
-  
+  }, [currentIndex, animations.length]);
 
   return (
     <div className="responsive-container">
@@ -37,8 +42,7 @@ const LoopingLottie: React.FC = () => {
           lottieRef={lottieRef}
           animationData={animations[currentIndex]}
           loop={false}
-          
-          className="responsive-lottie"
+          className="responsive-lottie bg-transparent text-white"
         />
       </div>
     </div>
