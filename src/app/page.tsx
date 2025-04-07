@@ -33,8 +33,7 @@ const LoopingLottie = dynamic(() => import('../components/LoopingLottie'), {
 // const Hero3D = dynamic(() => import("@/src/components/hero-3d"), { ssr: false })
 
 export default function Home() {
-
-  const animations = [animationDataK, animationDataL, animationDataM];
+// onst animations = [animationDataK, animationDataL, animationDataM];
 
 
   return (
