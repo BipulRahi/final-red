@@ -29,15 +29,15 @@ export default function MobileAppPage() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <Shield className="h-6 w-6" />
-            ContractSafe
+            <Shield className="h-6 w-6 flex-shrink-0" />
+            <span className="truncate">ContractSafe</span>
           </Link>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-2">
             <ThemeToggle />
             <Link href="/">
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Home
+                <span className="hidden sm:inline">Back to Home</span>
               </Button>
             </Link>
           </div>
@@ -45,7 +45,7 @@ export default function MobileAppPage() {
       </header>
 
       <main className="flex-1 container py-12 md:py-24">
-        <div className="grid gap-12 md:grid-cols-2 items-center">
+        <div className="grid gap-8 md:gap-12 md:grid-cols-2 items-center">
           <motion.div
             className="space-y-6"
             initial={{ opacity: 0, x: -20 }}
@@ -55,8 +55,8 @@ export default function MobileAppPage() {
             <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">
               Coming Soon
             </div>
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">ContractSafe Mobile App</h1>
-            <p className="text-xl text-muted-foreground">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tighter sm:text-5xl">ContractSafe Mobile App</h1>
+            <p className="text-base md:text-xl text-muted-foreground">
               Analyze contracts on the go. Scan documents with your phone camera and get instant insights.
             </p>
 
@@ -115,13 +115,13 @@ export default function MobileAppPage() {
           </motion.div>
 
           <motion.div
-            className="flex justify-center"
+            className="flex justify-center px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="relative">
-              <div className="bg-gradient-to-br from-primary to-primary/60 rounded-[40px] p-4 shadow-xl w-[280px] h-[560px] flex flex-col">
+            <div className="relative max-w-full">
+              <div className="bg-gradient-to-br from-primary to-primary/60 rounded-[40px] p-4 shadow-xl w-[280px] max-w-full h-[560px] flex flex-col mx-auto">
                 <div className="bg-black rounded-[32px] flex-1 overflow-hidden relative">
                   {/* App mockup screen */}
                   <div className="absolute inset-0 bg-background flex flex-col">
@@ -132,17 +132,17 @@ export default function MobileAppPage() {
                       </div>
                     </div>
 
-                    <div className="flex-1 p-4 flex flex-col gap-4">
+                    <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
                       <motion.div
                         className="bg-muted rounded-lg p-3 flex items-center gap-3"
                         initial={{ x: -50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.5 }}
                       >
-                        <Smartphone className="h-5 w-5 text-primary" />
-                        <div className="text-xs">
+                        <Smartphone className="h-5 w-5 text-primary flex-shrink-0" />
+                        <div className="text-xs truncate">
                           <p className="font-medium">Scan Document</p>
-                          <p className="text-muted-foreground">Use your camera</p>
+                          <p className="text-muted-foreground truncate">Use your camera</p>
                         </div>
                       </motion.div>
 
@@ -152,10 +152,10 @@ export default function MobileAppPage() {
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.7 }}
                       >
-                        <QrCode className="h-5 w-5 text-primary" />
-                        <div className="text-xs">
+                        <QrCode className="h-5 w-5 text-primary flex-shrink-0" />
+                        <div className="text-xs truncate">
                           <p className="font-medium">Recent Documents</p>
-                          <p className="text-muted-foreground">View your history</p>
+                          <p className="text-muted-foreground truncate">View your history</p>
                         </div>
                       </motion.div>
 
@@ -190,23 +190,23 @@ export default function MobileAppPage() {
               {/* Phone shadow */}
               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[220px] h-[20px] bg-black/20 rounded-full blur-xl" />
 
-              {/* Animated elements */}
+              {/* Animated elements - made responsive */}
               <motion.div
-                className="absolute -right-10 top-20 bg-primary/20 backdrop-blur-sm rounded-lg p-3 border border-primary/30"
+                className="absolute -right-4 sm:-right-10 top-20 bg-primary/20 backdrop-blur-sm rounded-lg p-3 border border-primary/30 max-w-[120px] sm:max-w-none"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.2, duration: 0.5 }}
               >
-                <p className="text-xs font-medium">Document analyzed!</p>
+                <p className="text-xs font-medium truncate">Document analyzed!</p>
               </motion.div>
 
               <motion.div
-                className="absolute -left-12 bottom-40 bg-green-500/20 backdrop-blur-sm rounded-lg p-3 border border-green-500/30"
+                className="absolute -left-4 sm:-left-12 bottom-40 bg-green-500/20 backdrop-blur-sm rounded-lg p-3 border border-green-500/30 max-w-[120px] sm:max-w-none"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.5, duration: 0.5 }}
               >
-                <p className="text-xs font-medium">Low risk contract</p>
+                <p className="text-xs font-medium truncate">Low risk contract</p>
               </motion.div>
             </div>
           </motion.div>
