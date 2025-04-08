@@ -23,6 +23,7 @@ export default function ServerOfflinePage() {
       console.log(response)
       if (response.ok) {
         setisServerOnline(true)
+
         router.replace("/dashboard")
         console.log('checked Colab status - everything fine');
         return;
@@ -67,6 +68,7 @@ export default function ServerOfflinePage() {
   // Auto-check server status periodically
   useEffect(() => {
     // Countdown timer for next automatic check
+    console.log("useeffect of server-offline")
     const countdownInterval = setInterval(() => {
       setNextCheckCountdown((prev) => {
         if (prev <= 1) {

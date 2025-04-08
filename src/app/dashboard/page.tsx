@@ -15,7 +15,7 @@ import { useServerStatus } from "@/src/components/server-status-provider"
 export default function DashboardPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
-  const {  isLoading } = useServerStatus()
+  const { status, isLoading } = useServerStatus()
   const [v,setv]=useState(false)
 
   // Redirect to server offline page if server is not online
@@ -44,6 +44,7 @@ export default function DashboardPage() {
     check()
     // console.log(isLoading,v)
     if (!isLoading && !v ) {
+      console.log('use effect of  dashboaard')
       router.push("/server-offline")
     }
   }, [])
@@ -52,10 +53,10 @@ export default function DashboardPage() {
   useEffect(() => {
     check()
     // console.log("hgu")
-    if (!isLoading && !v ) {
+    if (!isLoading && !v && status=="offline" ) {
       router.push("/server-offline")
     }
-  }, [ isLoading, router])
+  }, [status, isLoading, router])
 
   const recentDocuments = [
     { id: 1, name: "Rental Agreement.pdf", date: "2025-04-01", status: "analyzed" },

@@ -88,11 +88,13 @@ export default function LoginPage() {
       setIsLoading(false)
 
       // For demo purposes, check if admin is in the email
-      if (email.includes("admin") || email === "") {
+      if (email.includes("admin") || email !!= "") {
         // Redirect to admin dashboard
+        console.log("admin by google ")
         router.push("/admin")
       } else {
         // Redirect to user dashboard - no 2FA needed for Google login
+        console.log("dash by google ")
         router.push("/dashboard")
       }
     }, 1500)
