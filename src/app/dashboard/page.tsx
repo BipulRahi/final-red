@@ -24,15 +24,18 @@ export default function DashboardPage() {
       const response = await fetch('/api/colabData?action=health');
       console.log(response)
       if (!response.ok) {
-          return false;
+        router.replace("/server-offline")
+        return false;
         // throw new Error('Failed to check Colab status');
       }
       else if(response.ok){
         setv(true)
+        router.replace("/dashboard")
         return true;
       }
       
     } catch (err) {
+      router.replace("/server-offline")
       console.log("error occur while chekcing health");
       return false
     }
@@ -43,11 +46,6 @@ export default function DashboardPage() {
   useEffect(() => {
     check()
     console.log(isLoading,v)
-
-    if (!isLoading && !v ) {
-      console.log('use effect of  dashboaard')
-      router.push("/server-offline")
-    }
   }, [])
 
   
