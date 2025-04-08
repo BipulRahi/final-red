@@ -17,45 +17,48 @@ export default function DashboardPage() {
   const router = useRouter()
   const { status, isLoading } = useServerStatus()
   const [v,setv]=useState(false)
+  const [isServerOnline, setIsServerOnline] = useState(false) 
 
   // Redirect to server offline page if server is not online
-  async function check() {
+  async function checkServerHealth() {
     try {
       const response = await fetch('/api/colabData?action=health');
-      console.log(response)
-      if (!response.ok) {
-        router.replace("/server-offline")
-        return false;
-        // throw new Error('Failed to check Colab status');
-      }
-      else if(response.ok){
-        setv(true)
-        router.replace("/dashboard")
+      console.log("Health check response:", response);
+      if (response.ok) {
+        setIsServerOnline(true);
         return true;
+      } else {
+        setIsServerOnline(false);
+        return false;
       }
-      
     } catch (err) {
-      router.replace("/server-offline")
-      console.log("error occur while chekcing health");
-      return false
+      console.error("Error checking server health:", err);
+      setIsServerOnline(false);
+      return false;
     }
   }
 
-
-  
   useEffect(() => {
-    check()
-    console.log(isLoading,v)
-  }, [])
+    async function handleServerStatus() {
+      console.log("useEffect triggered - isLoading:", isLoading, "status:", status, "isServerOnline:", isServerOnline);
 
-  
-  useEffect(() => {
-    check()
-    // console.log("hgu")
-    if (!isLoading && !v && status=="offline" ) {
-      router.push("/server-offline")
+      // Initially check server health
+      if (!isServerOnline && !isLoading) {
+        const healthCheckResult = await checkServerHealth();
+        console.log("Health check result:", healthCheckResult);
+        if (!healthCheckResult) {
+          router.replace("/server-offline");
+        }
+      }
+      // If status becomes offline and we haven't explicitly determined it's online
+      else if (status === "offline" && !isLoading && !isServerOnline) {
+        console.log("Status is offline, redirecting...");
+        router.replace("/server-offline");
+      }
     }
-  }, [status, isLoading, router])
+
+    handleServerStatus();
+  }, [status, isLoading, router, isServerOnline]);
 
   const recentDocuments = [
     { id: 1, name: "Rental Agreement.pdf", date: "2025-04-01", status: "analyzed" },

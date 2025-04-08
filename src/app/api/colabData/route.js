@@ -14,6 +14,7 @@ export async function POST(req) {
 
       return NextResponse.json({ message: 'ngrok URL received successfully' }, { status: 200 });
     } else {
+      storedNgrokUrl= localStorage.getItem(("url")) ? localStorage.getItem(("url")) : null 
       return NextResponse.json({ error: 'ngrokUrl is missing in the request body' }, { status: 400 });
     }
   } catch (error) {
