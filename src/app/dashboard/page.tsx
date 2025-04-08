@@ -42,7 +42,8 @@ export default function DashboardPage() {
   
   useEffect(() => {
     check()
-    // console.log(isLoading,v)
+    console.log(isLoading,v)
+
     if (!isLoading && !v ) {
       console.log('use effect of  dashboaard')
       router.push("/server-offline")
