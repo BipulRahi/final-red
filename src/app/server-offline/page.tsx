@@ -21,18 +21,19 @@ export default function ServerOfflinePage() {
     try {
       const response = await fetch('/api/colabData?action=health');
       console.log(response)
-      if (response.status) {
+      if (response.ok) {
         setisServerOnline(true)
         router.replace("/dashboard")
         console.log('checked Colab status - everything fine');
         return;
       }
-      else{
+      else if(!response.ok){
         setisServerOnline(false)
         console.log("try again  ")
       }
       
     } catch (err) {
+      setisServerOnline(false)
       console.log("error occur while chekcing health");
     }
   }
@@ -42,7 +43,7 @@ export default function ServerOfflinePage() {
   const checkServerStatus = () => {
     setIsChecking(true)
     setCheckProgress(0)
-
+    
     // Simulate checking server status
     let progress = 0
     const interval = setInterval(() => {

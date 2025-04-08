@@ -13,9 +13,7 @@ import {
   Star,
 } from "lucide-react"
 // import Lottie from "lottie-react";
-import animationDataK from '../public/2.json'; // Adjust the file paths as needed
-import animationDataL from '../public/3.json';
-import animationDataM from '../public/44.json';
+
 import { ThemeToggle } from "@/src/components/theme-toggle"
 import { Card, CardContent } from "@/src/components/ui/card"
 // import AnimatedSequence from "../components/animat";

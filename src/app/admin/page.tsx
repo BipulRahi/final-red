@@ -65,6 +65,7 @@ export default function AdminDashboardPage() {
       const response = await fetch("/api/colabData");
       if (!response.ok) {
         throw new Error("Failed to fetch data from Colab");
+        return
       }
       const data = await response.json();
       setNgrokUrl(data.ngrokUrl);
@@ -79,6 +80,7 @@ export default function AdminDashboardPage() {
       const response = await fetch("/api/colabData?action=shutdown");
       if (!response.ok) {
         throw new Error("Failed to shutdown Colab do manually");
+        return
       }
 
       setNgrokUrl("");

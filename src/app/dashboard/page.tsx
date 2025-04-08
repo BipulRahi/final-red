@@ -15,14 +15,47 @@ import { useServerStatus } from "@/src/components/server-status-provider"
 export default function DashboardPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
-  const { status, isLoading } = useServerStatus()
+  const {  isLoading } = useServerStatus()
+  const [v,setv]=useState(false)
 
   // Redirect to server offline page if server is not online
+  async function check() {
+    try {
+      const response = await fetch('/api/colabData?action=health');
+      console.log(response)
+      if (!response.ok) {
+          return false;
+        // throw new Error('Failed to check Colab status');
+      }
+      else if(response.ok){
+        setv(true)
+        return true;
+      }
+      
+    } catch (err) {
+      console.log("error occur while chekcing health");
+      return false
+    }
+  }
+
+
+  
   useEffect(() => {
-    if (!isLoading && status === "offline") {
+    check()
+    // console.log(isLoading,v)
+    if (!isLoading && !v ) {
       router.push("/server-offline")
     }
-  }, [status, isLoading, router])
+  }, [])
+
+  
+  useEffect(() => {
+    check()
+    // console.log("hgu")
+    if (!isLoading && !v ) {
+      router.push("/server-offline")
+    }
+  }, [ isLoading, router])
 
   const recentDocuments = [
     { id: 1, name: "Rental Agreement.pdf", date: "2025-04-01", status: "analyzed" },
