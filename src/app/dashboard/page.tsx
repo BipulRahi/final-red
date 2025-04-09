@@ -15,7 +15,7 @@ import { useServerStatus } from "@/src/components/server-status-provider"
 export default function DashboardPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
-  const { status, isLoading } = useServerStatus()
+  // const { status, isLoading } = useServerStatus()
   const [v,setv]=useState(false)
   const [isServerOnline, setIsServerOnline] = useState(false) 
 
@@ -38,27 +38,28 @@ export default function DashboardPage() {
     }
   }
 
-  // useEffect(() => {
-  //   async function handleServerStatus() {
-  //     console.log("useEffect triggered - isLoading:", isLoading, "status:", status, "isServerOnline:", isServerOnline);
+  useEffect(() => {
+    async function handleServerStatus() {
+      console.log("useEffect triggered - isLoading:", "status:", "isServerOnline:", isServerOnline);
 
-  //     // Initially check server health
-  //     if (!isServerOnline && !isLoading) {
-  //       const healthCheckResult = await checkServerHealth();
-  //       console.log("Health check result:", healthCheckResult);
-  //       if (!healthCheckResult) {
-  //         router.replace("/server-offline");
-  //       }
-  //     }
-  //     // If status becomes offline and we haven't explicitly determined it's online
-  //     else if (status === "offline" && !isLoading && !isServerOnline) {
-  //       console.log("Status is offline, redirecting...");
-  //       router.replace("/server-offline");
-  //     }
-  //   }
+      // Initially check server health
+      if (!isServerOnline) {
+        const healthCheckResult = await checkServerHealth();
+        console.log("Health check result:", healthCheckResult);
+        if (!healthCheckResult) {
+          router.replace("/server-offline");
+        }
+      }
+      // If status becomes offline and we haven't explicitly determined it's online
+      else if ( !isServerOnline) {
+        console.log("Status is offline, redirecting...");
+        router.replace("/server-offline");
+      }
+    }
 
-  //   handleServerStatus();
-  // }, [status, isLoading, router, isServerOnline]);
+    handleServerStatus();
+  }, [ router, isServerOnline])
+  ;
 
   const recentDocuments = [
     { id: 1, name: "Rental Agreement.pdf", date: "2024-04-01", status: "analyzed" },
@@ -86,7 +87,7 @@ export default function DashboardPage() {
   }
 
   // Show loading state while checking server status
-  if (isLoading) {
+  if (isServerOnline) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
