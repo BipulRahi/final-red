@@ -38,32 +38,32 @@ export default function DashboardPage() {
     }
   }
 
-  useEffect(() => {
-    async function handleServerStatus() {
-      console.log("useEffect triggered - isLoading:", isLoading, "status:", status, "isServerOnline:", isServerOnline);
+  // useEffect(() => {
+  //   async function handleServerStatus() {
+  //     console.log("useEffect triggered - isLoading:", isLoading, "status:", status, "isServerOnline:", isServerOnline);
 
-      // Initially check server health
-      if (!isServerOnline && !isLoading) {
-        const healthCheckResult = await checkServerHealth();
-        console.log("Health check result:", healthCheckResult);
-        if (!healthCheckResult) {
-          router.replace("/server-offline");
-        }
-      }
-      // If status becomes offline and we haven't explicitly determined it's online
-      else if (status === "offline" && !isLoading && !isServerOnline) {
-        console.log("Status is offline, redirecting...");
-        router.replace("/server-offline");
-      }
-    }
+  //     // Initially check server health
+  //     if (!isServerOnline && !isLoading) {
+  //       const healthCheckResult = await checkServerHealth();
+  //       console.log("Health check result:", healthCheckResult);
+  //       if (!healthCheckResult) {
+  //         router.replace("/server-offline");
+  //       }
+  //     }
+  //     // If status becomes offline and we haven't explicitly determined it's online
+  //     else if (status === "offline" && !isLoading && !isServerOnline) {
+  //       console.log("Status is offline, redirecting...");
+  //       router.replace("/server-offline");
+  //     }
+  //   }
 
-    handleServerStatus();
-  }, [status, isLoading, router, isServerOnline]);
+  //   handleServerStatus();
+  // }, [status, isLoading, router, isServerOnline]);
 
   const recentDocuments = [
-    { id: 1, name: "Rental Agreement.pdf", date: "2025-04-01", status: "analyzed" },
-    { id: 2, name: "Employment Contract.pdf", date: "2025-03-28", status: "analyzed" },
-    { id: 3, name: "NDA Document.pdf", date: "2025-03-15", status: "analyzed" },
+    { id: 1, name: "Rental Agreement.pdf", date: "2024-04-01", status: "analyzed" },
+    { id: 2, name: "Employment Contract.pdf", date: "2024-03-28", status: "analyzed" },
+    { id: 3, name: "NDA Document.pdf", date: "2024-03-15", status: "analyzed" },
   ]
 
   const containerVariants = {
@@ -245,11 +245,27 @@ export default function DashboardPage() {
           </motion.div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <motion.div variants={itemVariants} className="md:col-span-1">
+            <motion.div variants={itemVariants} className="md:col-span-1" id="upload-section">
               <Card>
                 <CardHeader>
-                  <CardTitle>Upload New Document</CardTitle>
-                  <CardDescription>Upload a contract to analyze</CardDescription>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Upload New Document</CardTitle>
+                      <CardDescription>Upload a contract to analyze</CardDescription>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        // Find the file input and trigger a click
+                        const fileInput = document.querySelector('input[type="file"]')
+                        if (fileInput) {
+                          fileInput.click()
+                        }
+                      }}
+                    >
+                      Select File
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <FileUploader />
@@ -317,4 +333,3 @@ export default function DashboardPage() {
     </div>
   )
 }
-

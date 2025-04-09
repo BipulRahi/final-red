@@ -1,6 +1,4 @@
-
-"use client"
-
+"use client";
 import type React from "react"
 
 import { useState, useRef, useEffect, useCallback } from "react"
@@ -32,32 +30,7 @@ export default function LoginPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
-  // const [ser,setser]=useState(false)
   const router = useRouter()
-
-  
-// async function check() {
-//   try {
-//     const response = await fetch('/api/colabData?action=health');
-//     console.log(response)
-//     if (!response.ok) {
-//       setser(false)
-//       router.replace("/server-offline")
-//       throw new Error('Failed to check Colab status');
-//     }
-//     else if(response.ok){
-//       setser(true)
-//     }
-    
-//   } catch (err) {
-//     setser(false)
-//     console.log("error occur while chekcing health");
-//   }
-// }
-
-
-
-
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -88,13 +61,11 @@ export default function LoginPage() {
       setIsLoading(false)
 
       // For demo purposes, check if admin is in the email
-      if (email.includes("admin") || email !!= "") {
+      if (email.includes("admin") || email === "") {
         // Redirect to admin dashboard
-        console.log("admin by google ")
         router.push("/admin")
       } else {
         // Redirect to user dashboard - no 2FA needed for Google login
-        console.log("dash by google ")
         router.push("/dashboard")
       }
     }, 1500)
@@ -169,6 +140,9 @@ export default function LoginPage() {
 
       // For demo purposes, check if admin is in the email
       if (email.includes("admin")) {
+        // Set camera active first, then start camera
+        setCameraActive(false) // Reset camera state
+        setCameraLoading(true) // Show loading state
         startCamera()
       } else {
         alert("Email not found in admin list")
@@ -179,12 +153,15 @@ export default function LoginPage() {
   const startCamera = useCallback(async () => {
     setCameraLoading(true)
     setCameraError(null)
+    setPermissionDenied(false)
 
     try {
       // Stop any existing stream first
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop())
       }
+
+      console.log("Requesting camera access...")
 
       // Request camera with specific constraints for better performance
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -196,6 +173,8 @@ export default function LoginPage() {
         },
       })
 
+      console.log("Camera access granted, setting up video stream...")
+
       streamRef.current = stream
 
       if (videoRef.current) {
@@ -203,10 +182,12 @@ export default function LoginPage() {
 
         // Wait for video to be ready
         videoRef.current.onloadedmetadata = () => {
+          console.log("Video metadata loaded, playing video...")
           if (videoRef.current) {
             videoRef.current
               .play()
               .then(() => {
+                console.log("Video playing successfully")
                 setCameraActive(true)
                 setCameraLoading(false)
               })
@@ -218,8 +199,6 @@ export default function LoginPage() {
           }
         }
       }
-
-      setPermissionDenied(false)
     } catch (err) {
       console.error("Error accessing camera:", err)
       setCameraLoading(false)
@@ -548,7 +527,7 @@ export default function LoginPage() {
                 </div>
 
                 <AnimatePresence mode="wait">
-                  {!cameraActive && !verifying && !verificationSuccess ? (
+                  {!cameraActive && !cameraLoading && !verifying && !verificationSuccess ? (
                     <motion.form
                       key="email-form"
                       onSubmit={verifyEmail}
@@ -580,7 +559,7 @@ export default function LoginPage() {
                         )}
                       </Button>
                     </motion.form>
-                  ) : cameraActive || cameraLoading  ? (
+                  ) : cameraActive || cameraLoading ? (
                     <motion.div
                       key="camera-view"
                       className="space-y-4"

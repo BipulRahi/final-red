@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useDropzone } from "react-dropzone"
@@ -60,6 +62,9 @@ export default function FileUploader() {
     },
     maxFiles: 1,
     maxSize: 10485760, // 10MB
+    noClick: false, // Ensure click is enabled
+    noKeyboard: false, // Ensure keyboard navigation is enabled
+    preventDropOnDocument: false, // Allow dropping anywhere on the document
     onDropRejected: (rejections) => {
       const rejection = rejections[0]
       if (rejection.errors[0].code === "file-too-large") {
@@ -68,8 +73,6 @@ export default function FileUploader() {
         setError("Invalid file format. Please upload a PDF or image file (JPG, PNG).")
       }
     },
-    noClick: true, // Disable click to open file dialog
-    noKeyboard: true, // Disable keyboard to open file dialog
   })
 
   const handleUpload = () => {
@@ -103,7 +106,8 @@ export default function FileUploader() {
     }
   }
 
-  const handleBrowseClick = () => {
+  const handleBrowseClick = (e: React.MouseEvent) => {
+    e.stopPropagation() // Stop event propagation
     open()
   }
 
@@ -140,13 +144,15 @@ export default function FileUploader() {
         )}
       </AnimatePresence>
 
-      <div {...getRootProps()} className="relative">
+      <div {...getRootProps()} className="relative cursor-pointer">
         <motion.div
-          whileHover={{ scale: 1.01 }}
+          whileHover={{ scale: 1.01, borderColor: "var(--primary)" }}
+          whileTap={{ scale: 0.99 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
           className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-            isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+            isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50"
           }`}
+          onClick={() => open()} // Explicitly add click handler
         >
           <input {...getInputProps()} ref={fileInputRef} />
           <div className="flex flex-col items-center justify-center space-y-2">
@@ -161,7 +167,9 @@ export default function FileUploader() {
             >
               <Upload className="h-8 w-8 text-muted-foreground" />
             </motion.div>
-            <p className="text-sm font-medium">{isDragActive ? "Drop the file here" : "Drag & drop a file here"}</p>
+            <p className="text-sm font-medium">
+              {isDragActive ? "Drop the file here" : "Drag & drop or click to upload"}
+            </p>
             <p className="text-xs text-muted-foreground">Supports PDF, JPG, PNG (max 10MB)</p>
             <Button type="button" variant="outline" size="sm" onClick={handleBrowseClick} className="mt-2">
               Browse Files
@@ -276,4 +284,3 @@ export default function FileUploader() {
     </div>
   )
 }
-
